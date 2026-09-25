@@ -1,138 +1,105 @@
 
-// Store all calculations
-const history = [];
+const history = []
 
-// Add a calculation to the history
-function addToHistory(operand1, operand2, operator, result) {
-    history.push({
-        operand1: operand1,
-        operand2: operand2,
-        operator: operator,
-        result: result
-    });
+
+function add(num1, num2) {
+    return num1 + num2
 }
 
-// Addition
-function add(a, b) {
-    const result = a + b;
-    addToHistory(a, b, "+", result);
-    return result;
+function subtract(num1, num2) {
+    return num1 - num2
 }
 
-// Subtraction
-function subtract(a, b) {
-    const result = a - b;
-    addToHistory(a, b, "-", result);
-    return result;
+function multiply(num1, num2) {
+    return num1 * num2
 }
 
-// Multiplication
-function multiply(a, b) {
-    const result = a * b;
-    addToHistory(a, b, "*", result);
-    return result;
+function divide(num1, num2) {
+    if (num2 === 0) {
+        return "Cannot divide by zero"
+    }
+    return num1 / num2
 }
 
-// Division
-function divide(a, b) {
-    if (b === 0) {
-        return "Error: Cannot divide by zero.";
+function addToHistory(n1, n2, op, res) {
+  
+    const record = n1 + " " + op + " " + n2 + " = " + res
+    history.push(record)
+}
+function calculate(operation) {
+    const firstInput = document.getElementById('number1').value
+    const secondInput = document.getElementById('number2').value
+
+    const number1 = parseFloat(firstInput)
+    const number2 = parseFloat(secondInput)
+
+    if (firstInput === "" || secondInput === "") {
+        document.getElementById('result').textContent = "Please enter both numbers"
+        return
     }
 
-    const result = a / b;
-    addToHistory(a, b, "/", result);
-    return result;
+    let result = 0
+    let operatorSign = ""
+
+    if (operation === 'add') {
+        result = add(number1, number2)
+        operatorSign = "+"
+    } 
+    else if (operation === 'subtract') {
+        result = subtract(number1, number2)
+        operatorSign = "-"
+    } 
+    else if (operation === 'multiply') {
+        result = multiply(number1, number2)
+        operatorSign = "*"
+    } 
+    else if (operation === 'divide') {
+        result = divide(number1, number2)
+        operatorSign = "/"
+    }
+
+    
+    document.getElementById('result').textContent = result
+
+  
+    if (result !== "Cannot divide by zero") {
+        addToHistory(number1, number2, operatorSign, result)
+    }
 }
 
-// Get the numbers entered by the user
-function getNumbers() {
-    const number1 = Number(document.getElementById("number1").value);
-    const number2 = Number(document.getElementById("number2").value);
 
-    return {
-        number1: number1,
-        number2: number2
-    };
-}
-
-// Display the result
-function showResult(result) {
-    document.getElementById("result").textContent = result;
-}
-
-// Display calculation history
 function displayHistory() {
-    const historyList = document.getElementById("historyList");
+    const listContainer = document.getElementById('historyList')
+    listContainer.innerHTML = "" // clear previous screen list
 
-    // Clear the current history display
-    historyList.innerHTML = "";
-
-    // Check if there are no calculations
     if (history.length === 0) {
-        const message = document.createElement("li");
-        message.textContent = "You have no stored calculations.";
-        historyList.appendChild(message);
-        return;
+        listContainer.innerHTML = "<li>No calculations recorded yet</li>"
+        return
     }
 
-    // Display each calculation
-    for (const calculation of history) {
-        const historyItem = document.createElement("li");
-
-        historyItem.textContent =
-            `${calculation.operand1} ${calculation.operator} ` +
-            `${calculation.operand2} = ${calculation.result}`;
-
-        historyList.appendChild(historyItem);
+    for (let i = 0; i < history.length; i++) {
+        const item = document.createElement('li')
+        item.textContent = history[i]
+        listContainer.appendChild(item)
     }
 }
 
-// Clear calculation history
 function clearHistory() {
-    history.length = 0;
-
-    document.getElementById("historyList").innerHTML = "";
-
-    showResult("History cleared.");
+    history.length = 0
+    document.getElementById('historyList').innerHTML = "<li>History cleared</li>"
 }
+document.getElementById('addButton').addEventListener('click', function() {
+    calculate('add')
+})
+document.getElementById('subtractButton').addEventListener('click', function() {
+    calculate('subtract')
+})
+document.getElementById('multiplyButton').addEventListener('click', function() {
+    calculate('multiply')
+})
+document.getElementById('divideButton').addEventListener('click', function() {
+    calculate('divide')
+})
 
-// Add button
-document.getElementById("addButton").addEventListener("click", function () {
-    const numbers = getNumbers();
-    const result = add(numbers.number1, numbers.number2);
-
-    showResult(result);
-});
-
-// Subtract button
-document.getElementById("subtractButton").addEventListener("click", function () {
-    const numbers = getNumbers();
-    const result = subtract(numbers.number1, numbers.number2);
-
-    showResult(result);
-});
-
-// Multiply button
-document.getElementById("multiplyButton").addEventListener("click", function () {
-    const numbers = getNumbers();
-    const result = multiply(numbers.number1, numbers.number2);
-
-    showResult(result);
-});
-
-// Divide button
-document.getElementById("divideButton").addEventListener("click", function () {
-    const numbers = getNumbers();
-    const result = divide(numbers.number1, numbers.number2);
-
-    showResult(result);
-});
-
-// Show history button
-document.getElementById("historyButton").addEventListener("click", displayHistory);
-
-// Clear history button
-document.getElementById("clearButton").addEventListener("click", clearHistory);
-
-
-
+document.getElementById('historyButton').addEventListener('click', displayHistory)
+document.getElementById('clearButton').addEventListener('click', clearHistory)
